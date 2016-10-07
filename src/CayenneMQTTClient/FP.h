@@ -20,74 +20,73 @@
 #define FP_H
 
 /** 
- * @class FP
- * @brief API for managing Function Pointers
- * Example using the FP Class with global functions
- * @code
- *  #include "mbed.h"
- *  #include "FP.h"
- *
- *  FP<void,bool>fp;
- *  DigitalOut myled(LED1);
- *
- *  void handler(bool value)
- *  {
- *      myled = value;
- *      return;
- *  }
- *
- *  int main()
- *  {
- *      fp.attach(&handler);
- *
- *      while(1)
- *      {
- *          fp(1);
- *          wait(0.2);
- *          fp(0);
- *          wait(0.2);
- *      }
- *  }
- * @endcode
- */
-
-/** Example using the FP Class with different class member functions
- * @code
- *  #include "mbed.h"
- *  #include "FP.h"
- *
- *  FP<void,bool>fp;
- *  DigitalOut myled(LED4);
- *
- *  class Wrapper
- *  {
- *  public:
- *      Wrapper(){}
- *
- *      void handler(bool value)
- *      {
- *          myled = value;
- *          return;
- *      }
- *  };
- *
- *  int main()
- *  {
- *      Wrapper wrapped;
- *      fp.attach(&wrapped, &Wrapper::handler);
- *
- *      while(1)
- *      {
- *          fp(1);
- *          wait(0.2);
- *          fp(0);
- *          wait(0.2);
- *      }
- *  }
- * @endcode
- */
-
-/** Example using the FP Class with member FP and member function
+* @class FP
+* @brief API for managing Function Pointers
+*
+* Example using the FP Class with global functions
+* @code
+*  #include "mbed.h"
+*  #include "FP.h"
+*
+*  FP<void,bool>fp;
+*  DigitalOut myled(LED1);
+*
+*  void handler(bool value)
+*  {
+*      myled = value;
+*      return;
+*  }
+*
+*  int main()
+*  {
+*      fp.attach(&handler);
+*
+*      while(1)
+*      {
+*          fp(1);
+*          wait(0.2);
+*          fp(0);
+*          wait(0.2);
+*      }
+*  }
+* @endcode
+*
+* Example using the FP Class with different class member functions
+* @code
+*  #include "mbed.h"
+*  #include "FP.h"
+*
+*  FP<void,bool>fp;
+*  DigitalOut myled(LED4);
+*
+*  class Wrapper
+*  {
+*  public:
+*      Wrapper(){}
+*
+*      void handler(bool value)
+*      {
+*          myled = value;
+*          return;
+*      }
+*  };
+*
+*  int main()
+*  {
+*      Wrapper wrapped;
+*      fp.attach(&wrapped, &Wrapper::handler);
+*
+*      while(1)
+*      {
+*          fp(1);
+*          wait(0.2);
+*          fp(0);
+*          wait(0.2);
+*      }
+*  }
+* @endcode
+* 
+* Example using the FP Class with member FP and member function
 * @code
 *  #include "mbed.h"
 *  #include "FP.h"
