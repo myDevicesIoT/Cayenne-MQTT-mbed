@@ -26,14 +26,26 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 namespace Cayenne
 {
+	/**
+	* @class DataArray
+	* Class for manipulating a data array of unit/value pairs.
+	* @param BUFFER_SIZE Maximum buffer size to use for data array, in bytes.
+	* @param MAX_VALUES Maximum number of unit/value pairs in the array.
+	*/
 	template<int BUFFER_SIZE = CAYENNE_MAX_MESSAGE_SIZE, int MAX_VALUES = CAYENNE_MAX_MESSAGE_VALUES>
 	class DataArray
 	{
 	public:
+		/**
+		* Construct an empty array. 
+		*/
 		DataArray() {
 			clear();
 		}
 
+		/**
+		* Clear the array.
+		*/
 		void clear() {
 			for (int i = 0; i < CAYENNE_MAX_MESSAGE_VALUES; ++i) {
 				_values[i].unit = NULL;
@@ -43,6 +55,13 @@ namespace Cayenne
 			_index = 0;
 		}
 
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		* @param[in] unitInFlash If true the unit string is in flash memory, otherwise false.
+		* @param[in] valueInFlash If true the value string is in flash memory, otherwise false.
+		*/
 		void add(const char* unit, const char* value, bool unitInFlash = false, bool valueInFlash = false) {
 			if (_valueCount >= CAYENNE_MAX_MESSAGE_VALUES)
 				return;
@@ -79,6 +98,11 @@ namespace Cayenne
 			_valueCount++;
 		}
 
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		inline void add(const char* unit, const int value) {
 			char str[2 + 8 * sizeof(value)];
 #if defined(__AVR__) || defined (ARDUINO_ARCH_ARC32)
@@ -89,6 +113,11 @@ namespace Cayenne
 			add(unit, str);
 		}
 
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		inline void add(const char* unit, const unsigned int value) {
 			char str[1 + 8 * sizeof(value)];
 #if defined(__AVR__) || defined (ARDUINO_ARCH_ARC32)
@@ -99,6 +128,11 @@ namespace Cayenne
 			add(unit, str);
 		}
 
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		inline void add(const char* unit, const long value) {
 			char str[2 + 8 * sizeof(value)];
 #if defined(__AVR__) || defined (ARDUINO_ARCH_ARC32)
@@ -109,6 +143,11 @@ namespace Cayenne
 			add(unit, str);
 		}
 
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		inline void add(const char* unit, const unsigned long value) {
 			char str[1 + 8 * sizeof(value)];
 #if defined(__AVR__) || defined (ARDUINO_ARCH_ARC32)
@@ -120,13 +159,22 @@ namespace Cayenne
 		}
 
 #if defined(__AVR__) || defined (ARDUINO_ARCH_ARC32)
-
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		inline void add(const char* unit, const float value) {
 			char str[33];
 			dtostrf(value, 5, 3, str);
 			add(unit, str);
 		}
 
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		inline void add(const char* unit, const double value) {
 			char str[33];
 			dtostrf(value, 5, 3, str);
@@ -134,13 +182,22 @@ namespace Cayenne
 		}
 
 #else
-
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		inline void add(const char* unit, const float value) {
 			char str[33];
 			snprintf(str, 33, "%2.3f", value);
 			add(unit, str);
 		}
 
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		inline void add(const char* unit, const double value) {
 			char str[33];
 			snprintf(str, 33, "%2.3f", value);
@@ -150,53 +207,97 @@ namespace Cayenne
 #endif
 
 #ifdef CAYENNE_USING_PROGMEM
-
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		void add(const char* unit, const __FlashStringHelper* value) {
 			const char* valueString = reinterpret_cast<const char *>(value);
 			add(unit, valueString, false, true);
 		}
 
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		void add(const __FlashStringHelper* unit, const char* value) {
 			const char* unitString = reinterpret_cast<const char *>(unit);
 			add(unitString, value, true, false);
 		}
-
+		
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		void add(const __FlashStringHelper* unit, const __FlashStringHelper* value) {
 			const char* unitString = reinterpret_cast<const char *>(unit);
 			const char* valueString = reinterpret_cast<const char *>(value);
 			add(unitString, valueString, true, true);
 		}
 
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		inline void add(const __FlashStringHelper* unit, const int value) {
 			char str[2 + 8 * sizeof(value)];
 			itoa(value, str, 10);
 			add(unit, str);
 		}
 
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		inline void add(const __FlashStringHelper* unit, const unsigned int value) {
 			char str[1 + 8 * sizeof(value)];
 			utoa(value, str, 10);
 			add(unit, str);
 		}
 
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		inline void add(const __FlashStringHelper* unit, const long value) {
 			char str[2 + 8 * sizeof(value)];
 			ltoa(value, str, 10);
 			add(unit, str);
 		}
-
+		
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		inline void add(const __FlashStringHelper* unit, const unsigned long value) {
 			char str[1 + 8 * sizeof(value)];
 			ultoa(value, str, 10);
 			add(unit, str);
 		}
 
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		inline void add(const __FlashStringHelper* unit, const float value) {
 			char str[33];
 			dtostrf(value, 5, 3, str);
 			add(unit, str);
 		}
 
+		/**
+		* Add the specified unit/value pair to the array.
+		* @param[in] unit The unit to add.
+		* @param[in] value The value to add.
+		*/
 		inline void add(const __FlashStringHelper* unit, const double value) {
 			char str[33];
 			dtostrf(value, 5, 3, str);
@@ -204,11 +305,18 @@ namespace Cayenne
 		}
 
 #endif
-
+		/**
+		* Get the unit/value pair array.
+		* @return Pointer to the array.
+		*/
 		const CayenneValuePair* getArray() const {
 			return _values;
 		}
 
+		/**
+		* Get the number of items in the unit/value pair array.
+		* @return Count of items.
+		*/
     	size_t getCount() const {
 			return _valueCount;
 		}

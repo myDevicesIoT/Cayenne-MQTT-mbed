@@ -36,7 +36,15 @@ namespace Cayenne
 		CayenneValuePair values[CAYENNE_MAX_MESSAGE_VALUES];
 		size_t valueCount;
 	} MessageData;
-
+	
+	/**
+	* Client class for connecting to Cayenne via MQTT.
+	* @class MQTTClient
+	* @param Network A network class with the methods: read, write. See NetworkInterface.h for function definitions.
+	* @param Timer A timer class with the methods: countdown_ms, countdown, left_ms, expired. See TimerInterface.h for function definitions.
+	* @param MAX_MQTT_PACKET_SIZE Maximum size of an MQTT message, in bytes.
+	* @param MAX_MESSAGE_HANDLERS Maximum number of message handlers.
+	*/
 	template<class Network, class Timer, int MAX_MQTT_PACKET_SIZE = 128, int MAX_MESSAGE_HANDLERS = 5>
 	class MQTTClient : private MQTT::Client<Network, Timer, MAX_MQTT_PACKET_SIZE, 0>
 	{
