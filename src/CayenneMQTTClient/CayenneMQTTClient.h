@@ -26,15 +26,18 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 namespace Cayenne
 {
+	/**
+	* Cayenne message data passed to message handler functions.
+	*/
 	typedef struct MessageData
 	{
-		const char* clientID;
-		CayenneTopic topic;
-		unsigned int channel;
-		const char* id;
-		const char* type;
-		CayenneValuePair values[CAYENNE_MAX_MESSAGE_VALUES];
-		size_t valueCount;
+		const char* clientID; //**< The client ID of the message.*/
+		CayenneTopic topic; //**< The topic the message was received on.*/
+		unsigned int channel; //**< The channel the message was received on.*/
+		const char* id; //**< The message ID, if it is a command message, otherwise NULL.*/
+		const char* type; //**< The type of data in the message, if it exists, otherwise NULL.*/
+		CayenneValuePair values[CAYENNE_MAX_MESSAGE_VALUES]; //**< The unit/value data pairs in the message. Can be NULL.*/
+		size_t valueCount; //**< The count of items in the values array.*/
 	} MessageData;
 	
 	/**

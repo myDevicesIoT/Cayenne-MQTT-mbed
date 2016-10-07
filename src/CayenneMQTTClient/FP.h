@@ -19,7 +19,10 @@
 #ifndef FP_H
 #define FP_H
 
-/** Example using the FP Class with global functions
+/** 
+ * @class FP
+ * @brief API for managing Function Pointers
+ * Example using the FP Class with global functions
  * @code
  *  #include "mbed.h"
  *  #include "FP.h"
@@ -122,11 +125,6 @@
 *  }
 * @endcode
 */
-
-/**
- *  @class FP
- *  @brief API for managing Function Pointers
- */
 template<class retT, class argT>
 class FP
 {
