@@ -18,7 +18,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 #ifndef _CAYENNETYPES_h
 #define _CAYENNETYPES_h
 
-#define UNDEFINED "undef"
+#define UNDEFINED "null"
 
 // Data types
 #define ABSOLUTE_HUMIDITY "abs_hum" // Absolute Humidity

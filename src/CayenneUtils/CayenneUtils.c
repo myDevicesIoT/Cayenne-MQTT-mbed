@@ -270,7 +270,7 @@ int parsePayload(CayenneValuePair* values, size_t* valuesSize, const char** type
 	values[0].unit = NULL;
 	*type = NULL;
 	while (*index && index != '\0') {
-		if ((*index == ',') || (*index == token))	{
+		if ((*index == ',') || (*index == token)) {
 			if (*index == ',') {
 				*type = payload;
 				if (valueIndex < *valuesSize) {
@@ -334,7 +334,13 @@ int CayenneBuildDataPayload(char* payload, size_t* length, const char* type, con
 	int i;
 	size_t payloadLength = 0;
 	for (i = 0; i < valueCount; ++i) {
-		payloadLength += values[i].unit ? strlen(values[i].unit) + 1 : 0;
+		if (values[i].unit) {
+			payloadLength += strlen(values[i].unit) + 1;
+		}
+		else if (type) {
+			// If type exists but unit does not, use UNDEFINED for the unit.
+			payloadLength += strlen(UNDEFINED) + 1;
+		}
 		payloadLength += values[i].value ? strlen(values[i].value) + 1 : 0;
 	}
 	payloadLength += type ? strlen(type) + 1 : 0;
@@ -347,16 +353,19 @@ int CayenneBuildDataPayload(char* payload, size_t* length, const char* type, con
 	if (type) {
 		strcat(payload, type);
 	}
-	for (i = 0; i < valueCount && values[i].unit; ++i) {
-		if(payload[0] != '\0')
+	for (i = 0; i < valueCount; ++i) {
+		if (payload[0] != '\0')
 			strcat(payload, ",");
-		strcat(payload, values[i].unit);
+		if (values[i].unit)
+			strcat(payload, values[i].unit);
+		else if (type)
+			strcat(payload, UNDEFINED);
 	}
 	if (payload[0] != '\0' && valueCount > 0 && values[0].value)
 		strcat(payload, "=");
 	for (i = 0; i < valueCount && values[i].value; ++i) {
 		strcat(payload, values[i].value);
-		if(i + 1 < valueCount)
+		if (i + 1 < valueCount)
 			strcat(payload, ",");
 	}
 	*length = --payloadLength; //Subtract terminating null 

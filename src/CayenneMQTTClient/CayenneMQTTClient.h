@@ -81,12 +81,14 @@ namespace Cayenne
 		* @param[in] password Password
 		* @return success code
 		*/
-		int connect(char* username, char* clientID, char* password) {
+		int connect(const char* username, const char* clientID, const char* password) {
 			MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
 			data.MQTTVersion = 3;
-			data.clientID.cstring = _clientID = clientID;
-			data.username.cstring = _username = username;
-			data.password.cstring = password;
+			_clientID = clientID;
+			_username = username;
+			data.clientID.cstring = const_cast<char*>(_clientID);
+			data.username.cstring = const_cast<char*>(_username);
+			data.password.cstring = const_cast<char*>(password);
 			return Base::connect(data);
 		};
 
@@ -393,8 +395,8 @@ namespace Cayenne
 		}
 
 	private:
-		char* _username;
-		char* _clientID;
+		const char* _username;
+		const char* _clientID;
 		struct CayenneMessageHandlers
 		{
 			const char* clientID;
