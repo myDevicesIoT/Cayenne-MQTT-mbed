@@ -24,7 +24,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 #include "../CayenneUtils/CayenneUtils.h"
 #include "../CayenneUtils/CayenneDataArray.h"
 
-namespace Cayenne
+namespace CayenneMQTT
 {
 	/**
 	* Cayenne message data passed to message handler functions.
@@ -38,6 +38,20 @@ namespace Cayenne
 		const char* type; /**< The type of data in the message, if it exists, otherwise NULL. */
 		CayenneValuePair values[CAYENNE_MAX_MESSAGE_VALUES]; /**< The unit/value data pairs in the message. The units and values can be NULL. */
 		size_t valueCount; /**< The count of items in the values array. */
+
+		/**
+		* Get value at specified index.
+		* @param[in] index Index of value to retrieve, if none is specified it gets the first value.
+		* @return Value at the specified index, can be NULL.
+		*/
+		const char* getValue(size_t index = 0) const { return values[index].value; }
+
+		/**
+		* Get unit at specified index.
+		* @param[in] index Index of unit to retrieve, if none is specified it gets the first unit.
+		* @return Unit at the specified index, can be NULL.
+		*/
+		const char* getUnit(size_t index = 0) const { return values[index].unit; }
 	} MessageData;
 	
 	/**
@@ -58,11 +72,28 @@ namespace Cayenne
 		/**
 		* Create an Cayenne MQTT client object.
 		* @param[in] network Pointer to an instance of the Network class. Must be connected to the endpoint before calling MQTTClient connect.
+		* @param[in] username Cayenne username
+		* @param[in] password Cayenne password
+		* @param[in] clientID Cayennne client ID
 		* @param[in] command_timeout_ms Timeout for commands in milliseconds.
 		*/
-		MQTTClient(Network& network, unsigned int command_timeout_ms = 30000) :	Base(network, command_timeout_ms), _username(NULL), _clientID(NULL)
+		MQTTClient(Network& network, const char* username = NULL, const char* password = NULL, const char* clientID = NULL, unsigned int command_timeout_ms = 30000) : 
+			Base(network, command_timeout_ms), _username(username), _password(password), _clientID(clientID)
 		{
 			Base::setDefaultMessageHandler(this, &MQTTClient::mqttMessageArrived);
+		};
+
+		/**
+		* Initialize connection credentials.
+		* @param[in] username Cayenne username
+		* @param[in] password Cayenne password
+		* @param[in] clientID Cayennne client ID
+		*/
+		void init(const char* username, const char* password, const char* clientID)
+		{
+			_username = username;
+			_password = password;
+			_clientID = clientID;
 		};
 
 		/**
@@ -75,20 +106,29 @@ namespace Cayenne
 		};
 
 		/**
-		* Connect to the Cayenne server.
+		* Set default handler function called when a message is received.
+		* @param item Address of initialized object
+		* @param handler Function called when message is received, if no other handlers exist for the topic.
+		*/
+		template<class T>
+		void setDefaultMessageHandler(T *item, void (T::*handler)(MessageData&))
+		{
+			_defaultMessageHandler.attach(item, handler);
+		}
+
+		/**
+		* Connect to the Cayenne server. Connection credentials must be initialized before calling this function.
 		* @param[in] username Cayenne username
+		* @param[in] password Cayenne password
 		* @param[in] clientID Cayennne client ID
-		* @param[in] password Password
 		* @return success code
 		*/
-		int connect(const char* username, const char* clientID, const char* password) {
+		int connect() {
 			MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
 			data.MQTTVersion = 3;
-			_clientID = clientID;
-			_username = username;
-			data.clientID.cstring = const_cast<char*>(_clientID);
 			data.username.cstring = const_cast<char*>(_username);
-			data.password.cstring = const_cast<char*>(password);
+			data.password.cstring = const_cast<char*>(_password);
+			data.clientID.cstring = const_cast<char*>(_clientID);
 			return Base::connect(data);
 		};
 
@@ -396,6 +436,7 @@ namespace Cayenne
 
 	private:
 		const char* _username;
+		const char* _password;
 		const char* _clientID;
 		struct CayenneMessageHandlers
 		{

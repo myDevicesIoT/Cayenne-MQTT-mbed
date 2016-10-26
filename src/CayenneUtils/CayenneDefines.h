@@ -37,13 +37,13 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 //Comment this out to prevent digital and analog specific code from being compiled. If you only need to send
 //and receive standard channel data you can comment this out to decrease the program size.
-#define DIGITAL_AND_ANALOG_SUPPORT
+//#define DIGITAL_AND_ANALOG_SUPPORT
 
 //Comment this out if you don't need to subscribe to data or system info payloads.
 //#define PARSE_INFO_PAYLOADS
 
 //Some defines for AVR microcontrollers to allow easier usage of memory in program space.
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(ARDUINO_ARCH_SAM)
 #include <avr/pgmspace.h>
 #define CAYENNE_USING_PROGMEM
 #define CAYENNE_PROGMEM PROGMEM
