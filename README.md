@@ -1,5 +1,5 @@
 # Cayenne MQTT mbed Library
-The Cayenne MQTT mbed Library provides functions to easily connect to the Cayenne IoT project builder. This libray is available on the mbed developer site [here](https://developer.mbed.org/teams/myDevicesIoT/code/Cayenne-MQTT-mbed/).
+The Cayenne MQTT mbed Library provides functions to easily connect to the Cayenne IoT project builder. This library is also available on the mbed developer site [here](https://developer.mbed.org/teams/myDevicesIoT/code/Cayenne-MQTT-mbed/).
 
 This library bundles the [Eclipse Paho MQTT C/C++ client](https://github.com/eclipse/paho.mqtt.embedded-c).
 
